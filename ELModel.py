@@ -7,12 +7,13 @@ from elasticsearch_dsl.connections import connections
 es = Elasticsearch([{'host':'202.112.51.162','port':9200}])
 
 
-def loadData(table='ssl_20180819',sources=[]):
+def loadData(table,sources=[],detail={}):
     query = {
         "sort": ["_doc"],
-        "_source":sources
+        "_source":sources,
     }
-    page = es.search(index=table, size=1000, scroll='2m', body=query)
+    query.update(detail)
+    page = es.search(index=table, size=10000, scroll='2m', body=query)
     sid = page['_scroll_id']
     scroll_size = page['hits']['total']
     while scroll_size > 0:
@@ -22,4 +23,7 @@ def loadData(table='ssl_20180819',sources=[]):
         # Get the number of results that we returned in the last scroll
         scroll_size = len(page['hits']['hits'])
         yield page['hits']['hits']
+
+
+
 

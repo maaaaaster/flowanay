@@ -11,3 +11,8 @@ def addCountToMap(data,key):
     if key not in data:
         data[key] = 0
     data[key]+=1
+
+def addSetToMap(data,key,val):
+    if key not in data:
+        data[key] = set()
+    data[key].add(val)

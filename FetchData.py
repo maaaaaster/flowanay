@@ -28,5 +28,5 @@ def makePayload(day,table,match):
     print(result)
     return result
 
-fetchWithPayload(makePayload('20180819','ssl',match={"ConnectInfor.RecordTime": "2018-08-19 10:11:04"}))
+# fetchWithPayload(makePayload('20180819','ssl',match={"ConnectInfor.RecordTime": "2018-08-19 10:11:04"}))
 
