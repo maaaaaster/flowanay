@@ -9,7 +9,7 @@ es = Elasticsearch([{'host':'202.112.51.162','port':9200}])
 
 def loadData(table,sources=None,detail={}):
     query = {
-        "sort": ["_doc"]
+        # "sort": ["_doc"]
     }
     if sources is not None:
         query['_source'] = sources
@@ -17,6 +17,7 @@ def loadData(table,sources=None,detail={}):
     page = es.search(index=table, size=10000, scroll='2m', body=query)
     sid = page['_scroll_id']
     scroll_size = page['hits']['total']
+    yield page['hits']['hits']
     while scroll_size > 0:
         page = es.scroll(scroll_id=sid, scroll='2m')
         # Update the scroll ID
