@@ -7,11 +7,12 @@ from elasticsearch_dsl.connections import connections
 es = Elasticsearch([{'host':'202.112.51.162','port':9200}])
 
 
-def loadData(table,sources=[],detail={}):
+def loadData(table,sources=None,detail={}):
     query = {
-        "sort": ["_doc"],
-        "_source":sources,
+        "sort": ["_doc"]
     }
+    if sources is not None:
+        query['_source'] = sources
     query.update(detail)
     page = es.search(index=table, size=10000, scroll='2m', body=query)
     sid = page['_scroll_id']
