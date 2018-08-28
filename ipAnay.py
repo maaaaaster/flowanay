@@ -5,7 +5,7 @@ def checkIP(tablename,ip):
     detail = {
         "query": {
             "match_phrase": {
-                "ConnectInfor.dIP": ip
+                "ConnectInfor.ServerIP": ip
             }
         }
     }
@@ -28,12 +28,10 @@ def checkIP(tablename,ip):
     print(recordTimeSet)
 
 
-
-
 if __name__=='__main__':
-    tablename = 'ssl_20180821'
+    tablename = 'ssl_20180819'
     # ipname = '166.111.5.195'
     # ipname = '185.156.3.20'
-    ipname = '91.149.186.229'
-    ipname = '166.111.5.195'
+    # ipname = '91.149.186.229'
+    ipname = '85.113.32.121'
     checkIP(tablename,ipname)

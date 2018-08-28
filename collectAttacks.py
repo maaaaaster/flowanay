@@ -1,7 +1,7 @@
 from ELModel import loadData
 from utils import readDataFromKeys,addCountToMap
 import json,os
-from FetchData import fetchWithPayload,makePayload
+from backup.FetchData import fetchWithPayload,makePayload
 
 
 def loadIPSet():
@@ -56,18 +56,17 @@ def loadConnectKey():
             outf.write(connectKey+"\n")
 
 def loadFromKeys():
-    outf = open('attacks.txt','w+')
+    outf = open('attacks_connect.txt','w+')
     for line in open("connect_keys.txt").readlines():
         key = line.strip()
         match = {"ConnectInfor.ConnectKeyID": key}
-        http_payload = makePayload("20180825","http",match)
+        # http_payload = makePayload("20180825","http",match)
+        # http_data = fetchWithPayload(http_payload)[0]["_source"]
+        # get = readDataFromKeys(http_data, keys="HTTP_Client.GET", default="")
+        # host = readDataFromKeys(http_data, keys="HTTP_Client.Host", default="")
+        # connect_data['http'] = {'host':host,'get':get}
         connect_payload = makePayload("20180825", "connect", match)
-        http_data = fetchWithPayload(http_payload)[0]["_source"]
-        get = readDataFromKeys(http_data, keys="HTTP_Client.GET", default="")
-        host = readDataFromKeys(http_data, keys="HTTP_Client.Host", default="")
         connect_data = fetchWithPayload(connect_payload)[0]["_source"]
-        connect_data['http'] = {'host':host,'get':get}
-
         outf.write(json.dumps(connect_data)+'\n')
 
 if __name__=="__main__":

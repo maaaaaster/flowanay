@@ -1,26 +1,34 @@
 from ELModel import loadData
 from utils import readDataFromKeys
-from FetchData import *
-def checkCert(day,table,certname):
-    dataList = fetchWithPayload(makePayload(day, table, match={"TLS.Cert": certname}))
+
+def checkCert(tablename,certname):
     serverSet,clientSet,recordTimeSet = set(),set(),set()
-    for data in dataList:
-        data = data['_source']
-        print(data['TLS']['Cert'])
-        firstIP = readDataFromKeys(data,'ConnectInfor.first')
-        serverIP = readDataFromKeys(data, 'ConnectInfor.ServerIP')
-        recordTime = readDataFromKeys(data, 'ConnectInfor.RecordTime')
-        serverSet.add(serverIP)
-        clientSet.add(firstIP)
-        recordTimeSet.add(recordTime)
-    print(serverSet)
-    print(clientSet)
-    print(recordTimeSet)
+    detail = {
+        "query": {
+            "match_phrase": {
+                "TLS.Cert": certname
+            }
+        }
+    }
+    dataGen = loadData(table=tablename, detail=detail)
+    for dataList in dataGen:
+        for data in dataList:
+            data = data['_source']
+            firstIP = readDataFromKeys(data,'ConnectInfor.first')
+            serverIP = readDataFromKeys(data, 'ConnectInfor.ServerIP')
+            recordTime = readDataFromKeys(data, 'ConnectInfor.RecordTime')
+            print(readDataFromKeys(data, 'ConnectInfor'))
+            serverSet.add(serverIP)
+            clientSet.add(firstIP)
+            recordTimeSet.add(recordTime)
+    print('serverSet', serverSet)
+    print('clientSet', clientSet)
+    print('recordTimeSet', recordTimeSet)
 
 
 
 
 if __name__=='__main__':
-    certname = '0F929C1BDEF5A02C9B79995AE3CBCB0C363A05DC'
-    checkCert('20180819','ssl',certname)
+    certname = '451C838027B913DBCC7B7C554D6CA6B887AC1430'
+    checkCert('ssl_20180825',certname)
 
