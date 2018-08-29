@@ -8,11 +8,32 @@ def featuresFromConnectFile(filename):
         break
 
 def hwConnect2Features(connect):
-    sendByte = connect['ConnectInfor']['Bytes.dst']
-    recByte = connect['ConnectInfor']['Bytes.src']
-    sendNum = connect['ConnectInfor']['Num.dst']
-    recNum = connect['ConnectInfor']['Num.src']
-    print(sendByte,sendNum,recNum,recByte)
+    clientIP = connect['ConnectInfor']['ip.src']
+    serverIP = connect['ConnectInfor']['ip.dst']
+    sendByte = connect['ConnectInfor']['Bytes.src']
+    recByte = connect['ConnectInfor']['Bytes.dst']
+    sendNum = connect['ConnectInfor']['Num.src']
+    recNum = connect['ConnectInfor']['Num.dst']
+    sendPort = connect['ConnectInfor']['port.src']
+    recPort = connect['ConnectInfor']['port.dst']
+    timestmp = connect['ConnectInfor']['StartTime']
+    if serverIP != connect['ConnectInfor']['ServerIP']:
+        sendByte,recByte = recByte,sendByte
+        sendNum,recNum = recNum,sendNum
+        clientIP,serverIP = serverIP,clientIP
+        sendPort,recPort = recPort,sendPort
+    result = {
+        'timestmp':timestmp,
+        'clientIP':clientIP,
+        'serverIP':serverIP,
+        'sendByte':sendByte,
+        'recByte':recByte,
+        'sendNum':sendNum,
+        'recNum':recNum,
+        'sendPort':sendPort,
+        'recPort':recPort
+    }
+    return result
 
 
 if __name__=='__main__':

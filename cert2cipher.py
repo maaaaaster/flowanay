@@ -1,22 +1,9 @@
 from ELModel import loadData
-from utils import readDataFromKeys,addCountToMap,addSetToMap
+from utils import readDataFromKeys,addCountToMap,addSetToMap,saveCount,saveMap
 import json
 import pandas as pd
 
-def saveMap(mapData,outname):
-    outf = open(outname,'w+')
-    outf.write('key,data\n')
-    for key in mapData:
-        ciphers = ';'.join(list(mapData[key]))
-        line = '%s,%s\n'%(key,ciphers)
-        outf.write(line)
 
-def saveCount(key2count,outname):
-    outf = open(outname, 'w+')
-    outf.write('key,count\n')
-    for key in key2count:
-        line = '%s,%d\n' % (key, key2count[key])
-        outf.write(line)
 
 def saveGraph(tablename):
     certMap = {}

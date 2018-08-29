@@ -2,12 +2,13 @@ from ELModel import loadData
 from utils import readDataFromKeys
 
 
-def ip2domain(tablename,ip):
+def ip2domain(tablename,key):
     result = []
     detail = {
         "query": {
             "match": {
-                "DNS.Answers.Value": ip
+                "DNS.Answers.Value": key
+                # "DNS.Queries.Name":key
             }
         }
     }
@@ -27,5 +28,6 @@ def ip2domain(tablename,ip):
 
 
 if __name__== '__main__':
-    ip = '166.111.69.19'
+    ip = '169.229.150.100'
+    # domain = 'rsfglh.com'
     ip2domain('dns_20180824', ip)
