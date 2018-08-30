@@ -16,6 +16,7 @@ def fetchWithPayload(payload):
     headers = {"Content-Type": "application/json", "Accept":"application/json"}
     r = requests.post("http://202.112.51.162:8201/database", headers=headers, data=payload)
     result = r.json()
+    print(result)
     return result['hits']['hits']
 
 def makePayload(day,table,match):
@@ -25,5 +26,5 @@ def makePayload(day,table,match):
     result = json.dumps(data)
     return result
 
-# fetchWithPayload(makePayload('20180825','http',match={"ConnectInfor.RecordTime": "2018-08-25 10:11:04"}))
+fetchWithPayload(makePayload('20180825','http',match={"ConnectInfor.RecordTime": "2018-08-25 10:11:04"}))
 
