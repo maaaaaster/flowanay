@@ -6,6 +6,18 @@ from elasticsearch_dsl.connections import connections
 
 es = Elasticsearch([{'host':'202.112.51.162','port':9200}])
 
+def findOne(table,sources=None,detail={}):
+    query = {}
+    if sources is not None:
+        query['_source'] = sources
+    query.update(detail)
+    page = es.search(index=table,body=query)
+    scroll_size = page['hits']['total']
+    if scroll_size>0:
+        return page['hits']['hits'][0]['_source']
+    else:
+        return None
+
 
 def loadData(table,sources=None,detail={}):
     query = {

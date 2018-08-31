@@ -1,7 +1,8 @@
+import json
+
 from ELModel import loadData
-from utils import readDataFromKeys,addCountToMap
-import json,os
-from backup.FetchData import fetchWithPayload,makePayload
+from FetchData import fetchWithPayload, makePayload
+from utils import readDataFromKeys, addCountToMap
 
 
 def loadIPSet():
