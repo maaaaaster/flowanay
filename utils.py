@@ -7,10 +7,10 @@ def readDataFromKeys(data,keys,default=None):
             return default
     return temp
 
-def addCountToMap(data,key):
+def addCountToMap(data,key,count=1):
     if key not in data:
         data[key] = 0
-    data[key]+=1
+    data[key]+=count
 
 def addSetToMap(data,key,val):
     if key not in data:

@@ -1,8 +1,40 @@
 from ELModel import loadData
-from utils import readDataFromKeys
+from utils import readDataFromKeys,addCountToMap
+import json
+
+def CountQuery(tablename,detail):
+    serverSet, clientSet, recordTimeSet = set(), set(), set()
+    dataGen = loadData(table=tablename, detail=detail)
+    cipherCount = {}
+    for dataList in dataGen:
+        for data in dataList:
+            data = data['_source']
+            firstIP = readDataFromKeys(data, 'ConnectInfor.first')
+            serverIP = readDataFromKeys(data, 'ConnectInfor.ServerIP')
+            recordTime = readDataFromKeys(data, 'ConnectInfor.RecordTime')
+            cipher = readDataFromKeys(data,'TLS.ClientHello.CipherSuite')
+            addCountToMap(cipherCount,cipher)
+            print(json.dumps(data))
+            serverSet.add(serverIP)
+            clientSet.add(firstIP)
+            recordTimeSet.add(recordTime)
+    print('serverSet', serverSet)
+    print('clientSet', clientSet)
+    # print('recordTimeSet', recordTimeSet)
+    print('cipherCount',cipherCount)
+
+def checkCipher(tablename,cipher):
+    detail = {
+        "query": {
+            "match_phrase": {
+                "TLS.ClientHello.CipherSuite": cipher
+            }
+        }
+    }
+    CountQuery(tablename,detail)
+
 
 def checkCert(tablename,certname):
-    serverSet,clientSet,recordTimeSet = set(),set(),set()
     detail = {
         "query": {
             "match_phrase": {
@@ -10,26 +42,14 @@ def checkCert(tablename,certname):
             }
         }
     }
-    dataGen = loadData(table=tablename, detail=detail)
-    for dataList in dataGen:
-        for data in dataList:
-            data = data['_source']
-            firstIP = readDataFromKeys(data,'ConnectInfor.first')
-            serverIP = readDataFromKeys(data, 'ConnectInfor.ServerIP')
-            recordTime = readDataFromKeys(data, 'ConnectInfor.RecordTime')
-            print(readDataFromKeys(data, 'ConnectInfor'))
-            serverSet.add(serverIP)
-            clientSet.add(firstIP)
-            recordTimeSet.add(recordTime)
-    print('serverSet', serverSet)
-    print('clientSet', clientSet)
-    print('recordTimeSet', recordTimeSet)
+    CountQuery(tablename,detail)
+
+
 
 
 
 
 if __name__=='__main__':
-    certname = '863A502B3FD37E9B837B8B5A39599958FADF1B70'
-    # certname = 'E74220B93FF9342779CE66F6A233356EA11614C8'
-    checkCert('ssl_20180819',certname)
 
+    checkCert('ssl_20180829','7047539AB110251CFC67A3DBBFD9AE95928A6333')
+    # checkCipher('ssl_20180819','006B00FF')

@@ -3,6 +3,11 @@ from utils import readDataFromKeys,addCountToMap,addSetToMap,saveCount,saveMap
 import json
 import pandas as pd
 
+def filterSSL(sslData):
+    serverIP = readDataFromKeys(sslData, 'ConnectInfor.ServerIP')
+    if serverIP.startswith('166.111'):
+        return  False
+    return True
 
 
 def saveGraph(tablename):
@@ -10,15 +15,18 @@ def saveGraph(tablename):
     certCount = {}
     cipherMap = {}
     count = 0
-    dataGen = loadData(tablename,["ConnectInfor.first", "TLS.Cert", "TLS.ClientHello.CipherSuite"])
+    dataGen = loadData(tablename,["ConnectInfor.first", "TLS.Cert", "TLS.ClientHello.CipherSuite", "ConnectInfor.ServerIP"])
     for datalist in dataGen:
         for data in datalist:
             data = data['_source']
             cipher = readDataFromKeys(data,'TLS.ClientHello.CipherSuite')
             # ip = readDataFromKeys(data,'ConnectInfor.first')
             cert = readDataFromKeys(data,'TLS.Cert')
+            if not filterSSL(data):
+                continue
             if cipher is None or cert is None or len(cert) == 0:
                 continue
+
             cert = cert[0]
             addCountToMap(certCount,cert)
             addSetToMap(certMap,cert,cipher)
@@ -31,7 +39,7 @@ def saveGraph(tablename):
 
 def filterGraph(tablename):
     df = pd.read_csv('data/cert2ciphers_%s.csv'%tablename)
-    df['data_num'] = df['data'].map(lambda x:x.count(';')+1)
+    df['data_num'] = df['data'].map(lambda x:x.count('\t')+1)
     oneCipherCerts = set(df[df['data_num']==1]['key'])
 
     df2 = pd.read_csv('data/cert2count_%s.csv'%tablename)
@@ -40,5 +48,5 @@ def filterGraph(tablename):
     print(tocheck)
 
 
-# saveGraph('ssl_20180825')
-filterGraph('ssl_20180825')
+saveGraph('ssl_20180829')
+# filterGraph('ssl_20180825')
