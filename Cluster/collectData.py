@@ -53,26 +53,41 @@ def tlsCollect(tablename):
     df.to_csv(tablename+'_raw.csv',index=0)
 
 def graph_key(data):
-    try:
-        key = data['cert']+'_'+data['cipher']
-        if data['extensions'] is not None:
-            key = key +'/' +data['extensions']
-    except:
-        print(data)
+
+    key = data['cert']+'/'+data['cipher']
+    if data['extensions'] is not None:
+        key = key +'_' +data['extensions']
     return key
 
-def csv2graph():
-    for day in ['0820','0821','0823','0824','0825','0827']:
+def csv2graph(dates):
+    concatData = []
+    for day in dates:
         filename = 'ssl_2018%s_raw.csv'%day
         df = pd.read_csv(filename)
         df['key'] = df.apply(graph_key, axis = 1)
-        print(df['key'])
-        break
+        edge_count = df.groupby(['key'], as_index=False)['key'].agg({'cnt': 'count'})
+        concatData.append(edge_count)
+    data = pd.concat(concatData)
+    data = data.groupby(['key'], as_index=False)['cnt'].agg({'cnt': 'sum'})
+    data.to_csv('ssl_graph_raw.csv',index=False)
+    data = data[data.cnt>1]
+    data.to_csv('ssl_graph.csv', index=False)
+
+def graph2edgefile(graphfile,edgefile):
+    data = pd.read_csv(graphfile)
+    outf = open(edgefile,'w+')
+    for key in list(data['key']):
+        vals = key.split('/')
+        cert = vals[0]
+        cipher = vals[1]
+        outf.write('%s %s\n'%(cert,cipher))
+
 
 if __name__=='__main__':
     dates = [
         '0820','0821','0823','0824','0825','0827'
     ]
-    for date in dates:
-        tlsCollect('ssl_2018%s'%date)
-    csv2graph()
+    # for date in dates:
+    #     tlsCollect('ssl_2018%s'%date)
+    # csv2graph(dates)
+    graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')

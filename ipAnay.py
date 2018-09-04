@@ -3,11 +3,13 @@ from utils import readDataFromKeys
 def checkIP(tablename,ip):
     detail = {
         "query": {
-            "match_phrase": {
-                "ConnectInfor.ServerIP": ip
-                # "ConnectInfor.dIP": ip
-
+            "bool":{
+                "should": {
+                    "term":{"ConnectInfor.sIP": ip},
+                    "term": {"ConnectInfor.dIP": ip}
+                }
             }
+
         }
     }
     dataGen = loadData(table=tablename, detail= detail )
@@ -33,9 +35,9 @@ def checkIP(tablename,ip):
 
 
 if __name__=='__main__':
-    tablename = 'http_20180825'
+    tablename = 'http_20180829'
     # ipname = '166.111.5.195'
     # ipname = '185.156.3.20'
     # ipname = '91.149.186.229'
-    ipname = '169.229.150.100'
+    ipname = '166.111.41.246'
     checkIP(tablename,ipname)

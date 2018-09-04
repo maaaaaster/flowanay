@@ -1,20 +1,31 @@
-from sklearn.manifold import TSNE
-from matplotlib import pyplot as plt
-import pandas as pd
-# tsne=TSNE()
-# tsne.fit_transform(data_zs)  #进行数据降维,降成两维
-# #a=tsne.fit_transform(data_zs) #a是一个array,a相当于下面的tsne_embedding
-#
-# tsne=pd.DataFrame(tsne.embedding_,index=data_zs.index) #转换数据格式
-#
-#
-# d=tsne[r[u'聚类类别']==0]
-# plt.plot(d[0],d[1],'r.')
-#
-# d=tsne[r[u'聚类类别']==1]
-# plt.plot(d[0],d[1],'go')
-#
-# d=tsne[r[u'聚类类别']==2]
-# plt.plot(d[0],d[1],'b*')
-#
-# plt.show()
+from sklearn import datasets
+import matplotlib.pyplot as plt
+
+x = range(10)
+y = range(10)
+plt.plot(x, y)
+plt.show()
+
+# Loading dataset
+iris_df = datasets.load_iris()
+
+# Available methods on dataset
+print(dir(iris_df))
+
+# Features
+print(iris_df.feature_names)
+
+# Targets
+print(iris_df.target)
+
+# Target Names
+print(iris_df.target_names)
+label = {0: 'red', 1: 'blue', 2: 'green'}
+
+# Dataset Slicing
+x_axis = iris_df.data[:, 0]  # Sepal Length
+y_axis = iris_df.data[:, 2]  # Sepal Width
+
+# Plotting
+plt.scatter(x_axis, y_axis, c=iris_df.target)
+plt.show()

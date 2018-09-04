@@ -51,5 +51,5 @@ def checkCert(tablename,certname):
 
 if __name__=='__main__':
 
-    checkCert('ssl_20180829','7047539AB110251CFC67A3DBBFD9AE95928A6333')
+    checkCert('ssl_20180820','E0A5A6DCD99FFA00B425F24292F311352AFA5516')
     # checkCipher('ssl_20180819','006B00FF')
