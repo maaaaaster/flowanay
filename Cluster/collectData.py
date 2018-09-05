@@ -59,16 +59,23 @@ def graph_key(data):
         key = key +'_' +data['extensions']
     return key
 
+def checkIP(data):
+    return data.drop_duplicates().count()
+
 def csv2graph(dates):
     concatData = []
     for day in dates:
-        filename = 'ssl_2018%s_raw.csv'%day
+        filename = 'data/ssl_2018%s_raw.csv'%day
         df = pd.read_csv(filename)
-        df['key'] = df.apply(graph_key, axis = 1)
-        edge_count = df.groupby(['key'], as_index=False)['key'].agg({'cnt': 'count'})
+        # df['key'] = df.apply(graph_key, axis = 1)
+        edge_count = df.groupby(['cert','cipher','extensions'], as_index=False).agg({'clientIP':checkIP,'serverIP':'count'})
+        edge_count.rename(columns={'serverIP': 'cnt', 'clientIP': 'ipCnt'}, inplace=True)
+        print(edge_count)
         concatData.append(edge_count)
+    print('startConcat')
     data = pd.concat(concatData)
-    data = data.groupby(['key'], as_index=False)['cnt'].agg({'cnt': 'sum'})
+    print('stopConcat')
+    data =data.groupby(['cert','cipher','extensions'], as_index=False).agg({'cnt': 'sum','ipCnt':'max'})
     data.to_csv('ssl_graph_raw.csv',index=False)
     data = data[data.cnt>1]
     data.to_csv('ssl_graph.csv', index=False)
@@ -88,6 +95,6 @@ if __name__=='__main__':
         '0820','0821','0823','0824','0825','0827'
     ]
     # for date in dates:
-    #     tlsCollect('ssl_2018%s'%date)
-    # csv2graph(dates)
-    graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')
+    #     tlsCollect('data/ssl_2018%s'%date)
+    csv2graph(dates)
+    # graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')

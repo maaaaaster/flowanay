@@ -28,6 +28,6 @@ def ip2domain(tablename,key):
 
 
 if __name__== '__main__':
-    ip = '169.229.150.100'
+    ip = '101.231.39.93'
     # domain = 'rsfglh.com'
-    ip2domain('dns_20180824', ip)
+    ip2domain('dns_20180829', ip)

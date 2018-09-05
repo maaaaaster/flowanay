@@ -25,7 +25,8 @@ def checkIP(tablename,ip):
             firstIP = readDataFromKeys(data,'ConnectInfor.first')
             serverIP = readDataFromKeys(data, 'ConnectInfor.ServerIP')
             recordTime = readDataFromKeys(data, 'ConnectInfor.RecordTime')
-            print(firstIP,host,ua,recordTime)
+            cert = readDataFromKeys(data,'TLS.Cert')
+            print(firstIP,host,ua,recordTime,cert)
             serverSet.add(serverIP)
             clientSet.add(firstIP)
             recordTimeSet.add(recordTime)
@@ -35,9 +36,9 @@ def checkIP(tablename,ip):
 
 
 if __name__=='__main__':
-    tablename = 'http_20180829'
+    tablename = 'ssl_20180829'
     # ipname = '166.111.5.195'
     # ipname = '185.156.3.20'
     # ipname = '91.149.186.229'
-    ipname = '166.111.41.246'
+    ipname = '101.231.39.93'
     checkIP(tablename,ipname)
