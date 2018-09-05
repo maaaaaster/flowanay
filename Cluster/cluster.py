@@ -4,13 +4,17 @@ import pandas as pd
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 
+
 def loadVecs(filename):
     inf = open(filename)
     print(inf.readline())
+    certSet = loadHash()
     result = {}
     for line in inf.readlines():
         vals = line.split(' ')
         key = vals[0]
+        if key not in certSet:
+            continue
         result[key] = []
         for val in vals[1:]:
             result[key].append(float(val))
@@ -48,6 +52,11 @@ def culster(culterData):
     plt.title('DBSCAN finds 2 clusters and Noise')
     plt.show()
 
+
+def loadHash():
+    df = pd.read_csv('data/ssl_graph.csv')
+    certHashSet = set(df.key.map(lambda x: x.split('/')[0]))
+    return certHashSet
 
 if __name__=='__main__':
     clusterData = loadVecs('vec_all')
