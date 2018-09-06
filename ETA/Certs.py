@@ -62,8 +62,11 @@ def readCertFromFile(basicdir,inname,outname):
             filename = os.path.join(root,name)
             hashname = certname2hash(filename)
             if hashname in hashSet:
-                hashSet.remove(hashname)
-                result.append(loadCertFile(filename))
+                try:
+                    result.append(loadCertFile(filename))
+                    hashSet.remove(hashname)
+                except:
+                    print(filename)
                 left = len(hashSet)
                 print("left %d / %d"%(left,allLen))
 
@@ -71,4 +74,4 @@ def readCertFromFile(basicdir,inname,outname):
     df.to_csv(outname,index=False)
 
 if __name__=='__main__':
-    readCertFromFile('/Tsinghua_LanProbe/FlowLog/Cert','/home/OpenCode/collectCert/ssl_20180827_certs.txt','/home/OpenCode/collectCert/ssl_20180827_certs.csv')
+    readCertFromFile('/Tsinghua_LanProbe/FlowLog/Cert','/home/OpenCode/collectCert/cluster_certs.txt','/home/OpenCode/collectCert/cluster_certs.csv')

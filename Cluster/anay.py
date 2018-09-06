@@ -29,6 +29,21 @@ def filterCert():
     print(df.ok)
     return df
 
-if __name__=='__main__':
-    filterCert()
 
+def certList():
+    import json
+    df = pd.read_csv('ssl_graph.csv')
+    certs = list(df['cert'].drop_duplicates())
+    print(len(certs))
+    json.dump(certs,open('data/cluster_certs.txt','w+'))
+
+
+
+def checkCert():
+    df = pd.read_csv('data/cluster_certs.csv')
+    df['hasIP'] = df['SAN'].map(lambda x : 'IP Address:' in x)
+
+
+if __name__=='__main__':
+    # filterCert()
+    certList()

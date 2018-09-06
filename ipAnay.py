@@ -40,5 +40,5 @@ if __name__=='__main__':
     # ipname = '166.111.5.195'
     # ipname = '185.156.3.20'
     # ipname = '91.149.186.229'
-    ipname = '101.231.39.93'
+    ipname = '166.111.134.19'
     checkIP(tablename,ipname)
