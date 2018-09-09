@@ -23,6 +23,11 @@ def loadCertFile(filename):
     duration = int((ddl - birth + 1) / 86400)
     result['cert_duration'] = duration
     result['self_signed'] = 0
+    result['CN'] = 'None'
+    for k,v in cert.get_subject().get_components():
+        if k == 'CN':
+            result['CN'] = v
+
     # print(cert.get_issuer(),cert.get_subject())
     if cert.get_issuer().hash() == cert.get_subject().hash():
         result['self_signed'] = 1

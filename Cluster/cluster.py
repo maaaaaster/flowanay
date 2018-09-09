@@ -43,6 +43,7 @@ def clusterGraph():
         return pd.Series(result)
 
     features = pd.DataFrame(df.apply(edgeFeatures,axis=1))
+    features = features.iloc[:10000,:]
     print('start cluster')
     y_pred = DBSCAN(min_samples=3,eps = 0.6).fit_predict(features)
     print('ends cluster')

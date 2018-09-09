@@ -1,6 +1,8 @@
 from ELModel import loadData
 from utils import readDataFromKeys,addCountToMap,addSetToMap,saveCount,saveMap
 import pandas as pd
+import json
+from multiprocessing import  Pool
 
 def tlsCollect(tablename):
     result = []
@@ -89,12 +91,77 @@ def graph2edgefile(graphfile,edgefile):
         cipher = vals[1]
         outf.write('%s %s\n'%(cert,cipher))
 
+def loadFromFile(filename):
+    result = []
+    count = 0
+    for line in open(filename):
+        data = json.loads(line)
+        cipher = readDataFromKeys(data, 'TLS.ClientHello.CipherSuite')
+        cert = readDataFromKeys(data, 'TLS.Cert')
+        if cipher is None or cert is None or len(cert) == 0:
+            continue
+        cert = cert[0]
+        serverIP = readDataFromKeys(data, 'ConnectInfor.ServerIP')
+        dIP = readDataFromKeys(data, 'ConnectInfor.dIP')
+        sIP = readDataFromKeys(data, 'ConnectInfor.sIP')
+        dPort = readDataFromKeys(data, 'ConnectInfor.dPort')
+        sPort = readDataFromKeys(data, 'ConnectInfor.sPort')
+        if dIP == serverIP:
+            clientIP = sIP
+            clientPort = sPort
+            serverPort = dPort
+        else:
+            clientIP = dIP
+            clientPort = dPort
+            serverPort = sPort
+        serverName = readDataFromKeys(data, 'TLS.ClientHello.Extension.ServerName', 'NotExist')
+        extensions = readDataFromKeys(data, 'TLS.ClientHello.Extension.List', [])
+        extensionTypes = []
+        for extensionData in extensions:
+            extensionTypes.append(str(extensionData['Type']))
+        if len(extensionTypes) == 0:
+            extensionTypes.append('None')
+        extensionTypes.sort()
+        extensions = ';'.join(extensionTypes)
+
+        result.append({
+            'clientIP': clientIP,
+            'serverIP': serverIP,
+            'clientPort': clientPort,
+            'serverPort': serverPort,
+            'serverName': serverName,
+            'extensions': extensions,
+            'cipher': cipher,
+            'cert': cert
+        })
+    return result
+def loadFromFiles():
+    from datetime import timedelta, datetime
+    import os
+    yesterday = (datetime.today() + timedelta(-1)).strftime("%Y-%m-%d")
+    fileList = []
+    for root,sub,names in os.walk('/data_TH'):
+        if yesterday in root and 'SSL' in root:
+            for name in names:
+                fileList.append(os.path.join(root,name))
+    print(fileList[:10])
+    pool = Pool(20)
+    connects = pool.map(loadFromFile,fileList)
+    pool.close()
+    pool.join()
+    result = []
+    for connectList in connects:
+        result.extend(connectList)
+    df = pd.DataFrame(result)
+    df.to_csv('/home/zouyuan/%s.csv'%yesterday)
 
 if __name__=='__main__':
     dates = [
         '0820','0821','0823','0824','0825','0827'
     ]
+    loadFromFiles()
+
     # for date in dates:
     #     tlsCollect('data/ssl_2018%s'%date)
-    csv2graph(dates)
+    # csv2graph(dates)
     # graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')
