@@ -4,11 +4,11 @@ import matplotlib.pyplot as plt
 from networkx.algorithms import bipartite
 
 def loadEdges():
-    white = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/ssl_graph.csv')
+    white = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/20180909.csv')
     white = white[white.cnt>100]
     white['label'] = 'white'
-    black = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/black_cluster.csv')
-    black = black[black.cnt<20]
+    black = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/test_black_cluster.csv')
+    # black = black[black.cnt<20]
     black['label'] = 'black'
     result = pd.concat([black,white])
     t = result.groupby(['cert','cipher','extensions'], as_index=False).agg({'cnt':'count'})
@@ -23,6 +23,7 @@ def loadEdges():
     result.to_csv('graph_join.csv',index=False)
 
 def makeClientKey(data):
+    print (data)
     clientKey = data['cipher']
     if data['extensions'] is not None:
         clientKey = clientKey + '_' + data['extensions']
@@ -46,6 +47,7 @@ def showGraph(g,colorMap):
         edgeColors.append(color)
     nx.draw_networkx(g, node_color=nodeColors, edge_color=edgeColors, with_labels=False)
     plt.show()
+
 def makeEdgeFile():
     G = nx.Graph()
     def addToGraph(data):
@@ -87,6 +89,6 @@ def drawGraph():
         for edge in g.edges:
             outf.write('%s %s\n'%(edge[0],edge[1]))
 if __name__=='__main__':
-    # loadEdges()
-    makeEdgeFile()
-    # drawGraph()
+    loadEdges()
+    # makeEdgeFile()
+    drawGraph()

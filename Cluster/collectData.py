@@ -31,6 +31,7 @@ def tlsCollect(tablename):
                 serverPort = sPort
             serverName = readDataFromKeys(data, 'TLS.ClientHello.Extension.ServerName','NotExist')
             extensions = readDataFromKeys(data, 'TLS.ClientHello.Extension.List',[])
+            StartTime = readDataFromKeys(data, 'ConnectInfor.StartTime')
             extensionTypes = []
             for extensionData in extensions:
                 extensionTypes.append(str(extensionData['Type']))
@@ -47,12 +48,14 @@ def tlsCollect(tablename):
                 'serverName':serverName,
                 'extensions':extensions,
                 'cipher':cipher,
-                'cert':cert
+                'cert':cert,
+                'startTime':StartTime
+
             })
         count+=len(datalist)
         print(count)
     df = pd.DataFrame(result)
-    df.to_csv(tablename+'_raw.csv',index=0)
+    df.to_csv('data/'+tablename+'_raw.csv',index=0)
 
 def graph_key(data):
 
@@ -155,15 +158,16 @@ def loadFromFiles():
     for connectList in connects:
         result.extend(connectList)
     df = pd.DataFrame(result)
-    df.to_csv('/home/zouyuan/%s.csv'%yesterday)
+    df.to_csv('/home/zouyuan/%s.csv'%yesterday,index=False)
 
 if __name__=='__main__':
-    dates = [
-        '0820','0821','0823','0824','0825','0827'
-    ]
-    loadFromFiles()
+    # loadFromFiles()
 
-    # for date in dates:
-    #     tlsCollect('data/ssl_2018%s'%date)
-    # csv2graph(dates)
-    # graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')
+    dates = [
+        '0820','0821','0823','0824','0825','0827','0829'
+    ]
+
+    for date in dates:
+        tlsCollect('ssl_2018%s'%date)
+    csv2graph(dates)
+    graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')

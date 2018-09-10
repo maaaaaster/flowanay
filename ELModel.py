@@ -26,7 +26,7 @@ def loadData(table,sources=None,detail={}):
     if sources is not None:
         query['_source'] = sources
     query.update(detail)
-    page = es.search(index=table, size=10000, scroll='2m', body=query)
+    page = es.search(index=table, size=1000, scroll='2m', body=query)
     sid = page['_scroll_id']
     scroll_size = page['hits']['total']
     yield page['hits']['hits']
