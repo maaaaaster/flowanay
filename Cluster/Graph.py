@@ -46,6 +46,26 @@ def showGraph(g,colorMap):
         edgeColors.append(color)
     nx.draw_networkx(g, node_color=nodeColors, edge_color=edgeColors, with_labels=False)
     plt.show()
+def makeEdgeFile():
+    G = nx.Graph()
+    def addToGraph(data):
+        G.add_edge(data['client'],data['cert'])
+    df = pd.read_csv('graph_join.csv')
+    df['client'] = df.apply(makeClientKey, axis=1)
+    df.apply(addToGraph,axis=1)
+    largest_components = sorted(nx.connected_components(G), key=len, reverse=True)[0]
+    g = G.subgraph(largest_components)
+    outf = open('join_edges.txt', 'w+')
+    for edge in g.edges():
+        outf.write('%s %s\n' % (edge[0], edge[1]))
+
+    # edges = []
+    #
+    # def addEdge(data):
+    #     edges.append("%s %s\n" % (data['cert'], makeClientKey(data)))
+    # df = pd.read_csv('graph_join.csv')
+    # df.apply(addEdge,axis=1)
+
 def drawGraph():
     df = pd.read_csv('graph_join.csv')
 
@@ -61,12 +81,12 @@ def drawGraph():
     print('GraphMaked')
 
     outf = open('edge.txt','w+')
-    for largest_components in sorted(nx.connected_components(G), key=len, reverse=True)[0:1]:
+    for largest_components in sorted(nx.connected_components(G), key=len, reverse=True)[-20:-10]:
         g = G.subgraph(largest_components)
-        # showGraph(g)
+        showGraph(g,colorMap)
         for edge in g.edges:
             outf.write('%s %s\n'%(edge[0],edge[1]))
 if __name__=='__main__':
     # loadEdges()
-    # makeEdgeFile()
-    drawGraph()
+    makeEdgeFile()
+    # drawGraph()

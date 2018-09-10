@@ -106,6 +106,7 @@ def loadFromFile(filename):
         sIP = readDataFromKeys(data, 'ConnectInfor.sIP')
         dPort = readDataFromKeys(data, 'ConnectInfor.dPort')
         sPort = readDataFromKeys(data, 'ConnectInfor.sPort')
+        StartTime = readDataFromKeys(data, 'ConnectInfor.StartTime')
         if dIP == serverIP:
             clientIP = sIP
             clientPort = sPort
@@ -132,7 +133,8 @@ def loadFromFile(filename):
             'serverName': serverName,
             'extensions': extensions,
             'cipher': cipher,
-            'cert': cert
+            'cert': cert,
+            'startTime':StartTime
         })
     return result
 def loadFromFiles():
