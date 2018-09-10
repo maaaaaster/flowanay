@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from networkx.algorithms import bipartite
 
 def loadEdges():
-    white = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/20180909.csv')
+    white = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/test_20180909.csv')
     white = white[white.cnt>100]
     white['label'] = 'white'
     black = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/test_black_cluster.csv')
