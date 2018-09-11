@@ -166,8 +166,8 @@ if __name__=='__main__':
     dates = [
         '0820','0821','0823','0824','0825','0827','0829'
     ]
-
-    for date in dates:
-        tlsCollect('ssl_2018%s'%date)
+    #
+    # for date in dates:
+    #     tlsCollect('ssl_2018%s'%date)
     csv2graph(dates)
     graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')
