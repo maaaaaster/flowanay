@@ -91,6 +91,7 @@ def combineData():
                 hashMap[hash]['serverDomains'] = hashMap[hash]['serverDomains'] & passiveDomainSet
             if len(sameDomains)>0:
                 sameIPSet[serverIP] = sameDomains
+                print(sameDomains)
                 return -1
                 # print(serverIP,sameDomains)
         return 1

@@ -143,31 +143,43 @@ def loadFromFile(filename):
 def loadFromFiles():
     from datetime import timedelta, datetime
     import os
-    yesterday = (datetime.today() + timedelta(-1)).strftime("%Y-%m-%d")
+    # yesterday_d = (datetime.today() + timedelta(-1)).strftime("%Y-%m-%d")
+    day = (datetime.today()).strftime("%Y-%m-%d")
+    pre_h = (datetime.today() + timedelta(hours=-1)).strftime("%Y-%m-%d_%H")
+    print(pre_h)
     fileList = []
+    dnsList = []
     for root,sub,names in os.walk('/data_TH'):
-        if yesterday in root and 'SSL' in root:
-            for name in names:
-                fileList.append(os.path.join(root,name))
+        if day not in root:
+            continue
+        for name in names:
+            if pre_h not in name:
+                continue
+            filename = os.path.join(root, name)
+            if 'SSL' in root:
+                fileList.append(filename)
+            elif 'DNS' in root:                
+                dnsList.append(filename)
     print(fileList[:10])
+    print(dnsList[:10])
     pool = Pool(20)
     connects = pool.map(loadFromFile,fileList)
     pool.close()
     pool.join()
     result = []
-    for connectList in connects:
-        result.extend(connectList)
+    for dnsList in connects:
+        result.extend(dnsList)
     df = pd.DataFrame(result)
-    df.to_csv('/home/zouyuan/%s.csv'%yesterday,index=False)
+    df.to_csv('/home/zouyuan/data/%s.csv'%pre_h,index=False)
 
 if __name__=='__main__':
-    # loadFromFiles()
+    loadFromFiles()
 
-    dates = [
-        '0820','0821','0823','0824','0825','0827','0829'
-    ]
+    # dates = [
+    #     '0820','0821','0823','0824','0825','0827','0829'
+    # ]
     #
     # for date in dates:
     #     tlsCollect('ssl_2018%s'%date)
-    csv2graph(dates)
-    graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')
+    # csv2graph(dates)
+    # graph2edgefile('data/ssl_graph.csv','data/edge_ssl.txt')

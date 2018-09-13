@@ -51,7 +51,8 @@ def makeEdgeFile():
     G = nx.Graph()
     def addToGraph(data):
         G.add_edge(data['client'],data['cert'])
-    df = pd.read_csv('graph_join.csv')
+    # df = pd.read_csv('graph_join.csv')
+    df = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/final_graph.txt')
     df['client'] = df.apply(makeClientKey, axis=1)
     df.apply(addToGraph,axis=1)
     largest_components = sorted(nx.connected_components(G), key=len, reverse=True)[0]
@@ -96,5 +97,5 @@ def drawGraph():
     print(result)
 if __name__=='__main__':
     # loadEdges()
-    # makeEdgeFile()
-    drawGraph()
+    makeEdgeFile()
+    # drawGraph()
