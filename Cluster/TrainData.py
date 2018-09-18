@@ -55,13 +55,13 @@ def filterCert():
     from CheckFilterCert import loadRealAttack
     realAttackCerts = loadRealAttack()
     df = pd.read_csv(whiteJoinFile)
-    # t = df.groupby('cert', as_index=False).agg({'cnt':'sum','ipCnt':'max'})
-    # certSet = set(t[(t.cnt>250) & (t.ipCnt>100)]['cert']) - set(realAttackCerts)
-    # certSet = set(df[(df.cnt>100) & (df.ipCnt>10)]['cert']) - set(realAttackCerts)
-    # whiteEdges = df[df['cert'].map(lambda x:x in certSet)][df.ipCnt>1]
-    # whiteEdges.to_csv(filterdwhiteJoinFile,index=False)
-    t = df[(df.cnt>100) & (df.ipCnt>10)]
-    t.to_csv(filterdwhiteJoinFile, index=False)
+    t = df.groupby('cert', as_index=False).agg({'cnt':'sum','ipCnt':'max'})
+    certSet = set(t[(t.cnt>250) & (t.ipCnt>100)]['cert']) - set(realAttackCerts)
+    certSet = set(df[(df.cnt>100) & (df.ipCnt>10)]['cert']) - set(realAttackCerts)
+    whiteEdges = df[df['cert'].map(lambda x:x in certSet)][df.ipCnt>1]
+    whiteEdges.to_csv(filterdwhiteJoinFile,index=False)
+    # t = df[(df.cnt>100) & (df.ipCnt>10)]
+    # t.to_csv(filterdwhiteJoinFile, index=False)
 
 
 def filterBlack():
@@ -89,7 +89,7 @@ def recordCert():
     blackCerts.to_csv(checkWhiteFile,index=False)
 
 if __name__ == '__main__':
-    # filterCert()
+    filterCert()
     # filterBlack()
     combineData()
     recordCert()
