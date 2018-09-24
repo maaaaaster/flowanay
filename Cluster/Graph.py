@@ -51,7 +51,8 @@ def makeEdgeFile():
     G = nx.Graph()
     def addToGraph(data):
         G.add_edge(data['client'],data['cert'])
-    df = pd.read_csv('graph_join.csv')
+    # df = pd.read_csv('graph_join.csv')
+    df = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/final_graph.txt')
     df['client'] = df.apply(makeClientKey, axis=1)
     df.apply(addToGraph,axis=1)
     largest_components = sorted(nx.connected_components(G), key=len, reverse=True)[0]
@@ -69,9 +70,9 @@ def makeEdgeFile():
 
 def drawGraph():
     df = pd.read_csv('graph_join.csv')
-
     G = nx.Graph()
     colorMap ={}
+    print(len(df[df.label=='white']),len(df[df.label=='black']))
     def addToGraph(data):
         colorMap[edgeKey(data['cert'],data['client'])] = 'g' if data['label']=='white' else 'r'
         colorMap[data['cert']] = 'b'
@@ -82,12 +83,17 @@ def drawGraph():
     print('GraphMaked')
 
     outf = open('edge.txt','w+')
-    for largest_components in sorted(nx.connected_components(G), key=len, reverse=True):
+    for largest_components in sorted(nx.connected_components(G), key=len, reverse=True)[1:]:
+        count  = len(largest_components)
+        if count not in result:
+            result[count] = 0
+        result[count]+=1
         g = G.subgraph(largest_components)
         showGraph(g,colorMap)
         for edge in g.edges:
             outf.write('%s %s\n'%(edge[0],edge[1]))
+    print(result)
 if __name__=='__main__':
     # loadEdges()
-    # makeEdgeFile()
-    drawGraph()
+    makeEdgeFile()
+    # drawGraph()

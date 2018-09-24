@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import get_named_colors_mapping
 
 colorList= list(get_named_colors_mapping().values())
+from TrainGraph import *
 
 def loadVecs(filename):
     inf = open(filename)
@@ -22,13 +23,20 @@ def loadVecs(filename):
             result[key] = data
     return result
 
+def loadMap(filename):
+    result = {}
+    blackFile=pd.read_csv(filename)
+    def addToMap(data):
+        result[data['cert']] = data['cnt']
+    blackFile.apply(addToMap,axis=1)
+    return result
 
 def clusterGraph():
     from matplotlib.colors import get_named_colors_mapping
     colorList = list(get_named_colors_mapping().values())
     keyList = []
     trainList = []
-    inf = open('join_all.txt')
+    inf = open('embedding.txt')
     inf.readline()
     for line in inf.readlines():
         vals = line.split(' ')
@@ -39,10 +47,12 @@ def clusterGraph():
         keyList.append(key)
         trainList.append(data)
 
-
+    blackMap,whiteMap = loadMap(checkBlackFile),loadMap(checkWhiteFile),
+    blackCount = 0
+    whiteCount = 0
     features = pd.DataFrame(trainList)
     print('start cluster')
-    y_pred = DBSCAN(min_samples=3,eps = 0.9).fit_predict(features)
+    y_pred = DBSCAN(min_samples=2,eps = 0.6).fit_predict(features)
     print('ends cluster')
     group2Names = {}
     cDict = {}
@@ -53,11 +63,27 @@ def clusterGraph():
         if group not in group2Names:
             group2Names[group] = []
         group2Names[group].append(keyList[i])
-        cDict[group] = plt.scatter(pca_2d[i, 0], pca_2d[i, 1], c=colorList[group+1], marker='o')
-        # cDict[group] = plt.scatter(trainList[i][0], trainList[i][1], c=colorList[group + 1], marker='o')
+        # cDict[group] = plt.scatter(pca_2d[i, 0], pca_2d[i, 1], c=colorList[group+1], marker='o')
     for group in group2Names:
-        print(group,len(group2Names[group]))
-        print(group2Names[group][:10])
+        if group==-1 or len(group2Names[group])>80:
+            continue
+
+        # print(group,len(group2Names[group]))
+        black, white = 0, 0
+        for name in group2Names[group]:
+            if name in blackMap:
+                black +=blackMap[name]
+            if name in whiteMap:
+                white +=whiteMap[name]
+        if black+white<1000:
+            blackCount += black
+            whiteCount += white
+            if black==0:
+                print(group2Names[group])
+        # else:
+        #     print('white',white)
+        # print(blackCount,whiteCount)
+    print(len(group2Names.keys()))
     dumpGroup = group2Names.copy()
     del (dumpGroup[-1])
     json.dump(list(dumpGroup.values()), open('clusterResult.json', 'w+'))

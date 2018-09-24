@@ -74,6 +74,7 @@ def combineData():
     cert2Domain = cert2json(blackCerts)
     rawConnect = pd.read_csv('data/black_cluster_raw.csv')
     sameIPSet = {}
+    hashMap = {}
     def checkConnect(data):
         serverIP = data['serverIP']
         hash = data['cert']
@@ -81,14 +82,31 @@ def combineData():
             passiveDomainSet = ip2Domain[serverIP]
             certDomainSet = cert2Domain[hash]
             sameDomains = certDomainSet & passiveDomainSet & whiteSet
+            if hash not in hashMap:
+                hashMap[hash] = {
+                    'serverIP':set(),
+                    'serverDomains':set(),
+                }
+                hashMap[hash]['serverIP'].add(serverIP)
+                hashMap[hash]['serverDomains'] = hashMap[hash]['serverDomains'] & passiveDomainSet
             if len(sameDomains)>0:
                 sameIPSet[serverIP] = sameDomains
+                print(sameDomains)
                 return -1
                 # print(serverIP,sameDomains)
         return 1
     rawConnect['isMalware'] = rawConnect.apply(checkConnect,axis=1)
     for ip in sameIPSet:
         print(ip,sameIPSet[ip])
+    result = []
+    for hash in hashMap:
+        result.append({
+            'hash':hash,
+            'serverIP': ';'.join(list(hashMap[hash]['serverIP'])),
+            'serverDomains': ';'.join(list(hashMap[hash]['serverDomains'])),
+            'certDomains': ';'.join(list(cert2Domain[hash]))
+            })
+    pd.DataFrame(result).to_csv('data/blackCheck.csv')
     rawConnect.to_csv('test.csv')
 
 def checkIP(data):
@@ -100,7 +118,7 @@ def joinFromRaw(inname,outname):
     edge_count.rename(columns={'serverIP': 'cnt', 'clientIP': 'ipCnt'}, inplace=True)
     edge_count.to_csv(outname, index=False)
 if __name__=='__main__':
-    # combineData()
-    joinFromRaw('/home/OpenCode/FlowAnay/Cluster/data/20180909.csv','/home/OpenCode/FlowAnay/Cluster/data/test_20180909.csv')
+    combineData()
+    # joinFromRaw('/home/OpenCode/FlowAnay/Cluster/data/20180909.csv','/home/OpenCode/FlowAnay/Cluster/data/test_20180909.csv')
     # joinFromRaw('test.csv','test_black_cluster.csv')
 
