@@ -86,20 +86,11 @@ def checkCluster():
     G,colorMap = makeGraph()
     data = json.load(open('group2names.json'))
     blackMap,whiteMap = loadMap(checkBlackFile),loadMap(checkWhiteFile)
+
     totalBlack,totalWhite = 0,0
     for groupID in data:
         nodes = data[groupID]
         g = G.subgraph(nodes)
-        # newG = nx.Graph()
-        # for node in nodes:
-        #     newG.add_node(node)
-        #     cnt = 2
-        #     for k, v in nx.bfs_successors(g, node):
-        #         for node2 in v:
-        #             newG.add_edge(k, node2)
-        #         cnt -= 1
-        #         if cnt <= 0:
-        #             break
         # print(groupID,len(nodes),len(newG.nodes))
         black, white = countGraph(g, blackMap, whiteMap)
         totalBlack += black

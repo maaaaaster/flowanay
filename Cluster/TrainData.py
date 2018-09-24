@@ -1,18 +1,21 @@
 import pandas as pd
 import json
 
-whiteFile1 = '/home/OpenCode/FlowAnay/Cluster/data/ssl_graph.csv'
-whiteFile2 = '/home/OpenCode/FlowAnay/Cluster/data/20180909_graph.csv'
-blackFile = '/home/OpenCode/FlowAnay/Cluster/data/black_cluster.csv'
-whiteJoinFile = '/home/OpenCode/FlowAnay/Cluster/data/white_graph_raw.csv'
-certToCollect = '/home/OpenCode/FlowAnay/Cluster/data/white_cert.txt'
-filterdwhiteJoinFile = '/home/OpenCode/FlowAnay/Cluster/data/white_graph.csv'
-filterCertList = '/home/OpenCode/FlowAnay/Cluster/data/filter_white_cert.json'
-filterdBlackJoinFile = '/home/OpenCode/FlowAnay/Cluster/data/black_graph.csv'
-egdeFilePath = '/home/OpenCode/FlowAnay/Cluster/data/edges_graph.txt'
-graphfile = '/home/OpenCode/FlowAnay/Cluster/data/final_graph.txt'
-checkBlackFile = '/home/OpenCode/FlowAnay/Cluster/data/checkBlack.txt'
-checkWhiteFile = '/home/OpenCode/FlowAnay/Cluster/data/checkWhite.txt'
+whiteFile1 = '/home/FlowAnay/Cluster/data/ssl_graph.csv'
+whiteFile2 = '/home/FlowAnay/Cluster/data/20180909_graph.csv'
+blackFile = '/home/FlowAnay/Cluster/data/black_cluster.csv'
+whiteJoinFile = '/home/FlowAnay/Cluster/data/white_graph_raw.csv'
+certToCollect = '/home/FlowAnay/Cluster/data/white_cert.txt'
+filterdwhiteJoinFile = '/home/FlowAnay/Cluster/data/white_graph.csv'
+filterCertList = '/home/FlowAnay/Cluster/data/filter_white_cert.json'
+filterdBlackJoinFile = '/home/FlowAnay/Cluster/data/black_graph.csv'
+egdeFilePath = '/home/FlowAnay/Cluster/data/edges_graph.txt'
+graphfile = '/home/FlowAnay/Cluster/data/final_graph.txt'
+checkBlackFile = '/home/FlowAnay/Cluster/data/checkBlack.txt'
+checkWhiteFile = '/home/FlowAnay/Cluster/data/checkWhite.txt'
+
+
+realTest = '/home/FlowAnay/Cluster/data/toCheck.txt'
 
 def joinFromRaw(inname,outname):
     def checkIP(data):
@@ -25,10 +28,10 @@ def joinFromRaw(inname,outname):
 
 
 def loadEdges():
-    white = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/test_20180909.csv')
+    white = pd.read_csv('/home/FlowAnay/Cluster/data/test_20180909.csv')
     white = white[white.cnt>100]
     white['label'] = 'white'
-    black = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/test_black_cluster.csv')
+    black = pd.read_csv('/home/FlowAnay/Cluster/test_black_cluster.csv')
     # black = black[black.cnt<20]
     black['label'] = 'black'
     result = pd.concat([black,white])
@@ -74,7 +77,7 @@ def filterBlack():
 def combineData():
     black = pd.read_csv(filterdBlackJoinFile)
     black['label'] = 'black'
-    aBlack = pd.read_csv('/home/OpenCode/FlowAnay/Cluster/data/ActualBlack.csv')
+    aBlack = pd.read_csv('/home/FlowAnay/Cluster/data/ActualBlack.csv')
     aBlack['label'] = 'black'
     white = pd.read_csv(filterdwhiteJoinFile)
     white['label'] ='white'
@@ -88,8 +91,15 @@ def recordCert():
     blackCerts = result[result.label == 'white'].groupby(['cert'], as_index=False).agg({'cnt':'sum'})
     blackCerts.to_csv(checkWhiteFile,index=False)
 
+
+def testFile():
+    df = pd.read_csv(whiteJoinFile)
+    df = df[df.ipCnt>1]
+    df.to_csv(realTest,index=False)
+
 if __name__ == '__main__':
-    filterCert()
+    # filterCert()
     # filterBlack()
-    combineData()
-    recordCert()
+    # combineData()
+    # recordCert()
+    testFile()
