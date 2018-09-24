@@ -23,7 +23,6 @@ def loadEdges():
     result.to_csv('graph_join.csv',index=False)
 
 def makeClientKey(data):
-    print (data)
     clientKey = data['cipher']
     if data['extensions'] is not None:
         clientKey = clientKey + '_' + data['extensions']
@@ -83,12 +82,12 @@ def drawGraph():
     print('GraphMaked')
 
     outf = open('edge.txt','w+')
-    for largest_components in sorted(nx.connected_components(G), key=len, reverse=True)[-20:-10]:
+    for largest_components in sorted(nx.connected_components(G), key=len, reverse=True):
         g = G.subgraph(largest_components)
         showGraph(g,colorMap)
         for edge in g.edges:
             outf.write('%s %s\n'%(edge[0],edge[1]))
 if __name__=='__main__':
-    loadEdges()
+    # loadEdges()
     # makeEdgeFile()
     drawGraph()
