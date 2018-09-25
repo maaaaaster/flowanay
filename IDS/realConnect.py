@@ -6,7 +6,7 @@ from utils import readDataFromKeys, addCountToMap
 
 def loadIPSet():
     detail = {}
-    dataLists = loadData(table="ssl_20180827",detail=detail)
+    dataLists = loadData(table="ssl_20180918",detail=detail)
     result80 = []
     result443 = []
     count = 0
