@@ -83,8 +83,6 @@ def drawGraph():
     print('GraphMaked')
 
     outf = open('edge.txt','w+')
-    result = {}
-    print(len(G.edges),len(G.nodes))
     for largest_components in sorted(nx.connected_components(G), key=len, reverse=True)[1:]:
         count  = len(largest_components)
         if count not in result:
